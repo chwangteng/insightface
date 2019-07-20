@@ -3,6 +3,43 @@
 
 By Jia Guo and [Jiankang Deng](https://jiankangdeng.github.io/)
 
+## 自制数据集  
+这里以vgg-face为例
+###下载
+首先在vggface官网下载数据集，下载得到的不是打包好的图片文件，而是一些url和标注。使用网上搜索的多线程代码下载数据，其中因为有些url已经失效、有些url需要科学下载，还有一些url含有重定向等，我找到的脚本**把有返回响应的都保存成了jpg**。下载完的数据格式形如  
+
+----PersonA  
+-----Img000001.jpg  
+-----Img000002.jpg  
+----PersonB  
+-----Img000001.jpg  
+-----Img000002.jpg  
+
+###清洗数据
+使用pillow包或者其他工具判断jpg文件的完整性，删除不是jpg的文件
+
+###裁切人脸
+下载的vgg-face数据集是整张图加标注信息，其中标注信息是DPM检测的（多个人脸的图不知道是不是人工干预的，最终标注的确是是目标人），根据标注信息对每张图片进行裁切，裁切时注意标注框有非法值（大于图片长宽，或许还有负数）要加以限制，将裁切后的图片输出到某个目录。
+
+###再次清洗
+裁切后的图片中也有明显不是人脸的，甚至在检查url时还发现一些不是人像的图片。这里我使用python版本的mtcnn对crop后的人脸进行了检测，如果检测不到人脸就删除图片。（后来发现可以不做，因为后面对齐的代码中也用到了mtcnn，检测不到人脸的会跳过）
+
+###人脸对齐
+使用src/align/下的align_dataset_mtcnn文件进行对齐，查看该代码发现是没有使用mtcnn检测的关键点的，所以其实并没有对齐，只是将检测框区域的图片resize成了指定大小。（需要安装tensorflow）  需要修改导入的名字
+```python
+import facenet.src.facenet as facenet
+import facenet.src.align.detect_face as detect_face
+```
+还尝试过使用align_dataset进行对齐，这里面使用了dlib的68个关键点文件对齐（文件网上可以搜到官网链接），但是对齐效果感觉很多图片都变形太严重，最后没有使用。
+
+###生成lst文件
+face2rec2需要有lst文件才能生成rec和index文件。这里我参考了src/data中的dir2lst文件，将print改为写入文件，我的目录中总是出现Thumbs.db（我是windows远程ubuntu），所以我稍微修改了代码跳过了这些文件。
+
+###后续
+运行face2rec2，运行train.py，其中的参数怎么写可以看代码中的定义以及使用。运行这些py文件还需要安装facenet，后来逛issue看到其实作者代码中有一部分就是facenet的。。。。总之我是又用pip装了一个facenet。。。。
+
+###
+
 ## License
 
 The code of InsightFace is released under the MIT License. There is no limitation for both acadmic and commercial usage.
