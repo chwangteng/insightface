@@ -3,7 +3,7 @@
 
 By Jia Guo and [Jiankang Deng](https://jiankangdeng.github.io/)
 
-## 自制数据集  
+## 自制人脸识别数据集  
 这里以vgg-face为例
 ### 下载
 首先在vggface官网下载数据集，下载得到的不是打包好的图片文件，而是一些url和标注。使用网上搜索的多线程代码下载数据，其中因为有些url已经失效、有些url需要科学下载，还有一些url含有重定向等，我找到的脚本**把有返回响应的都保存成了jpg**。下载完的数据格式形如  
@@ -36,7 +36,7 @@ import facenet.src.align.detect_face as detect_face
 face2rec2需要有lst文件才能生成rec和index文件。这里我参考了src/data中的dir2lst文件，将print改为写入文件，我的目录中总是出现Thumbs.db（我是windows远程ubuntu），所以我稍微修改了代码跳过了这些文件。
 
 ### 后续
-运行face2rec2，运行train.py，其中的参数怎么写可以看代码中的定义以及使用。运行这些py文件还需要安装facenet，后来逛issue看到其实作者代码中有一部分就是facenet的。。。。总之我是又用pip装了一个facenet。。。。
+运行face2rec2，运行train.py，其中的参数怎么写可以看代码中的定义以及使用。运行这些py文件还需要安装facenet，后来逛issue看到其实作者代码中有一部分就是facenet的。。。。总之我是又用pip装了一个facenet。。。。后来知道这些好像是mxnet里的封装格式，一些转换函数也是可以直接用mxnet里的，对mxnet一点不熟，还懵逼了好久*.lst到底是什么呢。这是一个复杂的repo。
 
 ###
 
